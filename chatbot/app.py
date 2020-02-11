@@ -15,9 +15,6 @@ users = db.users
 @app.route('/')
 def index():
 	if 'username' in session:
-		# user=session['user_name']
-		# user={'username' : user}
-		# return render_template('chatbot.html',user=user)
 		return 'Hi! You are logged in as ' + session['user_name']
 	return render_template('index.html')
 
@@ -58,7 +55,10 @@ def login():
 		return "Invalid userID or password"
 	return "Invalid Credentials"
 
-
+@app.route('/dropsession')
+def dropsession():
+	session.pop('user_id', None)
+	return render_template('index.html')
 
 @app.route("/get")
 #function for the bot response
@@ -70,27 +70,24 @@ def get_bot_response():
 
     minDist=4;
     rpl="Please be more specific!"
+    # if userText=="logout":
+    # 	return redirect(url_for('logout'))
+    # else:
     for q in questions:
     	t = editDistDP(q['msg'],userText,len(q['msg']),len(userText))
     	if(t<minDist):
     		minDist=t
     		rpl=q['rpl']
-
-
-    # for q in ques
-
-
-    # reply = chats.find_one({'msg' : userText})
-    # if reply:
-    # 	rpl = reply['rpl']
-    # else:
-    # 	rpl = "Sorry,Idk"
-
     history.insert({'user_id':session['user_id'],
     				'user' : userText,
     				'bot' : rpl
     				})
     return rpl
+
+
+@app.route("/logout")
+def logout():
+	return render_template('logout.html')
 
 
 	
